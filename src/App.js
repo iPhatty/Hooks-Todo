@@ -1,17 +1,43 @@
 import React, { useState } from 'react';
 import './App.css';
+import Icon from '@material-ui/core/Icon';
+import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
+import Popover from '@material-ui/core/Popover';
 
 function Todo({ todo, index, completeTodo, deleteTodo }) {
   const style = {
     textDecoration: todo.isComplete ? 'line-through' : null
   };
 
+  const [target, setTarget] = useState(null);
+
+  const isOpen = target;
+
   return (
-    <div style={style} className="todo">
-      {todo.text}
-      <div>
-        <button onClick={() => completeTodo(index)}>{!todo.isComplete ? 'Complete' : 'Undo'}</button>
-        <button onClick={() => deleteTodo(index)}>Delete</button>
+    <div className="todo">
+      <span onClick={e => setTarget(e.target)} style={style}>
+        {todo.text}
+      </span>
+      <Popover
+        id="Todo"
+        open={isOpen}
+        onClose={e => setTarget(null)}
+        anchorEl={target}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center'
+        }}
+      >
+        <div className="todo__popover-text">{todo.text}</div>
+      </Popover>
+      <div className="todo__button-container">
+        <IconButton size="small" onClick={() => completeTodo(index)}>
+          <Icon fontSize="small">{!todo.isComplete ? 'done' : 'undo'}</Icon>
+        </IconButton>
+        <IconButton aria-label="Delete" onClick={() => deleteTodo(index)}>
+          <Icon fontSize="small">delete_forever</Icon>
+        </IconButton>
       </div>
     </div>
   );
@@ -35,6 +61,9 @@ function TodoForm({ addTodo }) {
         value={value}
         onChange={e => setValue(e.target.value)}
       />
+      <Button type="submit" variant="contained">
+        Submit
+      </Button>
     </form>
   );
 }
