@@ -12,7 +12,7 @@ function Todo({ todo, index, completeTodo, deleteTodo }) {
 
   const [target, setTarget] = useState(null);
 
-  const isOpen = target;
+  const isOpen = target || false;
 
   return (
     <div className="todo">
@@ -69,21 +69,30 @@ function TodoForm({ addTodo }) {
 }
 
 function App() {
-  const [todos, setTodos] = useState([
+  const myStorage = window.localStorage;
+
+  let defaultTodoList = [
     { text: 'Learn react hooks', isComplete: false },
     { text: 'Wait for new fridge', isComplete: false },
     { text: 'Technical test', isComplete: false }
-  ]);
+  ]
+
+  if (myStorage.getItem('todoList')) {
+    defaultTodoList = JSON.parse(myStorage.getItem('todoList'))
+  }
+  const [todos, setTodos] = useState(defaultTodoList);
 
   const addTodo = text => {
     const newTodos = [...todos, { text, isComplete: false }];
     setTodos(newTodos);
+    localStorage.setItem('todoList', JSON.stringify(newTodos))
   };
 
   const completeTodo = index => {
     const newTodos = [...todos];
     newTodos[index].isComplete = !newTodos[index].isComplete;
     setTodos(newTodos);
+    localStorage.setItem('todoList', JSON.stringify(newTodos))
   };
 
   const deleteTodo = index => {
@@ -91,6 +100,7 @@ function App() {
       return i !== index;
     });
     setTodos(newTodos);
+    localStorage.setItem('todoList', JSON.stringify(newTodos))
   };
 
   return (
